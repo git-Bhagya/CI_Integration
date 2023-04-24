@@ -1,0 +1,204 @@
+﻿@model AdminViewModel
+
+@using System.Security.Claims;
+@{
+    var identity = User.Identity as ClaimsIdentity;
+    var email = identity?.FindFirst(ClaimTypes.Email)?.Value;
+}
+    
+<link rel="stylesheet" href="//cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css" />
+
+<div class="row">
+    <div class="col-lg-12">
+        <h3 class="mt-5">Skill</h3><hr />
+        <div class="d-flex justify-content-between mt-4">
+            <div id="skill-table_filter" class="dataTables_filter">
+                @*<label>Search:<input type="search" class="" placeholder="" aria-controls="skill-table"></label>*@
+                 <div>
+                    <input type="text" id="myInput" placeholder="Search...">
+                </div>
+            </div>
+            <div>
+                <form method="post" asp-controller="Admin" asp-action="GetSkillAdd">
+                    <div class="addSkill">
+                        <a class="btn btn-login buttonColor mt-2" data-bs-toggle="modal" data-bs-target="#SkillAdd" style="border:2px solid #F88634;color: #F88634;border-radius:20px">+ Add</a>
+                        
+                        <div class="modal fade" id="SkillAdd" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel">Add Mission Theme</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="mb-3">
+                                            <label for="exampleFormControlInput1" class="form-label">Skill Name</label>
+                                            <input type="text" class="form-control" asp-for="SkillName">
+                                            <span asp-validation-for="SkillName" class="text-danger"></span>
+                                        </div>
+                                        @*<div class="mb-3">
+                                            <label for="exampleFormControlInput1" class="form-label">Skill Status</label>
+                                            <input type="text" class="form-control" asp-for="SkillStatus">
+                                            <span asp-validation-for="SkillStatus" class="text-danger"></span>
+                                        </div>*@
+                                        <label class="ms-1">Status</label>
+                                        <select class="form-control mt-2" asp-for="SkillStatus">
+                                            <option disabled selected>Select an option </option>
+                                            <option>Active</option>
+                                            <option>In-active</option>
+                                        </select>
+                                        <span asp-validation-for="SkillStatus" class="text-danger"></span>
+                                        
+                                        
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-outline-dark" style="border-radius:50px" data-bs-dismiss="modal">Cancel</button>
+                                        <button type="submit" class="btn buttonColor" style="border:2px solid #F88634;color: #F88634;border-radius:20px">Save</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+        <div class="table mt-4" style="overflow-x:auto;">
+            <table class="table border" id="skill-table">
+                <thead>
+                    <tr>
+                        <th scope="col">Skill id</th>
+                        <th scope="col">Skill Name</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Create At</th>
+                        <th scope="col">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.SkillList)
+                    {
+                        <tr>
+                            <td>@item.SkillId</td>
+                            <td>@item.SkillName</td>
+                            @if (@item.Status == "Approved")
+                            {
+                                <td class="text-success">@item.Status</td>
+                            }
+                            else
+                            {
+                                <td class="text-danger">@item.Status</td>
+                            }
+                            <td>@item.CreatedAt.ToShortDateString()</td>
+
+                            <td>
+                                <a class="btn rounded-pill" onclick="checkedSkill(@item.SkillId)">
+                                    <i class="fa-regular fa-circle-check text-success"></i>
+                                </a>
+                                <a class="btn text-danger rounded-pill" onclick="cancelSkill(@item.SkillId)">
+                                    <i class="fa-regular fa-xmark fa-circle-xmark text-danger"></i>
+                                </a>
+
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript" src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+
+ <script type="text/javascript">
+     $(document).ready(function () {
+        var dataTable = $('#skill-table').DataTable({
+        "pageLength": 4,
+        });
+        $('#search-bar').keyup(function () {
+        dataTable.search(this.value).draw();
+        });
+        });
+        //approved
+        function checkedSkill(sid){
+            $.ajax({
+                url:"/Admin/CheckedSkill",
+                method:"post",
+                data:{
+                    id:sid,
+                },
+                success: function(){
+                    location.reload();
+                }
+            })
+        }
+
+        //cancel
+        function cancelSkill(sid){
+            $.ajax({
+                url:"/Admin/CancelSkill",
+                method:"post",
+                data:{
+                    id:sid,
+                },
+                success: function(){
+                    location.reload();
+                }
+            })
+        }
+
+
+        // Get the input field
+        var input = document.getElementById("myInput");
+
+        // Get the table and rows
+        var table = document.getElementById("skill-table");
+        var rows = table.getElementsByTagName("tr");
+
+        // Add event listener to the input field
+        input.addEventListener("keyup", function() {
+            var filter = input.value.toLowerCase();
+            for (var i = 1; i < rows.length; i++) {
+                var row = rows[i];
+                var cells = row.getElementsByTagName("td");
+                var found = false;
+                for (var j = 0; j < cells.length; j++) {
+                    var cell = cells[j];
+                    if (cell.innerHTML.toLowerCase().indexOf(filter) > -1) {
+                        found = true;
+                        break;
+                    }
+                }
+                if (found) {
+                    row.style.display = "";
+                } else {
+                    row.style.display = "none";
+                }
+            }
+        });
+
+
+</script>      
+<style>
+    .dataTables_length{
+        display:none;
+    }
+    #skill-table_filter{
+        float:left;
+    }
+    .dataTables_info{
+        display:none;
+    }
+    .paginate_button:hover{
+        border:1px solid #f88634 !important;
+        background-color:#f88634 !important;
+        color:white !important;
+    }
+    .paginate_button{
+        border:1px solid #f88634 !important;
+        background-color:white !important;
+        color:#f88634 !important;
+    }
+   
+    
+</style>

@@ -1,0 +1,184 @@
+﻿@model AdminViewModel
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="~/css/adminUserStyle.css">
+    <script src="https://code.jquery.com/jquery-3.6.4.js" integrity="sha256-a9jBBRygX1Bh5lt8GZjXDzyOB+bWve9EiO7tROUtj/E=" crossorigin="anonymous"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+    <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/5/tinymce.min.js"></script>
+</head>
+<body>
+    <form>
+    <div class="container border mt-5" style="background-color:#F8F9FC;">
+        <div class="">
+            <h4 class="fw-normal my-4 ms-2">Edit</h4>
+        </div>
+    </div>
+    <div class="mb-3">
+        <label for="exampleFormControlInput1" class="form-label">Mission Title</label>
+        <input type="text" class="form-control" id="MTitle" asp-for="MissionTitle">
+        <span asp-validation-for="MissionTitle" class="text-danger"></span>
+    </div>
+    <div class="mb-3">
+        <label for="exampleFormControlInput1" class="form-label">Short Description</label>
+        <input type="text" class="form-control" id="ShortDescription">
+    </div>
+    <div class="mb-3">
+        <label for="exampleFormControlInput1" class="form-label">Description Title</label>
+        <textarea type="text" class="form-control" id="Descriptions" rows="6" cols="6"></textarea>
+    </div>
+    <div class="mb-3">
+        <label for="exampleFormControlInput1" class="form-label">Country Id</label>
+        <input type="number" class="form-control" id="CountryId">
+    </div>
+    <div class="mb-3">
+        <label for="exampleFormControlInput1" class="form-label">City Id</label>
+        <input type="number" class="form-control" id="CityId">
+    </div>
+    <div class="mb-3">
+        <label for="exampleFormControlInput1" class="form-label">Organization Name</label>
+        <input type="text" class="form-control" id="OrgNames">
+    </div>
+    <div class="mb-3">
+        <label for="exampleFormControlInput1" class="form-label">Organization Details</label>
+        <input type="text" class="form-control" id="OrgDetail">
+    </div>
+    <div class="mb-3">
+        <label for="exampleFormControlInput1" class="form-label">start Date</label>
+        <input type="date" class="form-control" id="SDate">
+    </div>
+    <div class="mb-3">
+        <label for="exampleFormControlInput1" class="form-label">End Date</label>
+        <input type="date" class="form-control actionEdit" id="EDate">
+    </div>
+    <div class="mb-3">
+        <label for="exampleFormControlInput1" class="form-label">Mission Type</label>
+        <input type="text" class="form-control" id="MType">
+    </div>
+    <div class="mb-3">
+        <label for="exampleFormControlInput1" class="form-label">Mission Seats</label>
+        <input type="number" class="form-control" id="Seat">
+    </div>
+    @*<div class="mb-3">
+        <label for="exampleFormControlInput1" class="form-label">Mission Deadline</label>
+        <input type="text" class="form-control" id="Deadline">
+        </div>*@
+    <div class="mb-3">
+        <label for="exampleFormControlInput1" class="form-label">Mission Theme</label>
+        <input type="number" class="form-control" id="MTheme">
+    </div>
+    @* <div class="mb-3">
+        <label for="exampleFormControlInput1" class="form-label">Mission Skill</label>
+        <input type="text" class="form-control" id="MSkill">
+        </div>
+        <div class="mb-3">
+        <label for="exampleFormControlInput1" class="form-label">Mission Images</label>
+        <input type="text" class="form-control" id="MImage">
+        </div>
+        <div class="mb-3">
+        <label for="exampleFormControlInput1" class="form-label">Mission documents</label>
+        <input type="text" class="form-control" id="MDocuments">
+        </div>
+        <div class="mb-3">
+        <label for="exampleFormControlInput1" class="form-label">Mission Availability</label>
+        <input type="text" class="form-control" id="MAvailability">
+        </div>
+        <div class="mb-3">
+        <label for="exampleFormControlInput1" class="form-label">Mission Video</label>
+        <input type="text" class="form-control" id="MVideo">
+        </div>*@
+         <div class="row d-flex justify-content-end">
+            <div class="text-end mb-3">
+                <button type="button" class="btn btn-outline-secondary rounded-5">Cancel</button>
+                <button type="submit" class="btn buttonColor rounded-5 ms-2" onclick="saveChangesMission()">Save</button>
+            </div>
+        </div>
+        </form>
+    <style>
+        .buttonColor:hover {
+            color: white;
+            background-color: #f88634;
+        }
+    </style>
+
+</body>
+</html>
+<script>
+    //edit and update for both
+        function saveChangesMission(){
+            $.ajax({
+                url : "/Admin/EditMissionData",
+                method : "POST",
+                data:{
+                    id:missionid,
+                    mTitle:$('#MTitle').val(),
+                    Sdes:$('#ShortDescription').val(),
+                    des:$('#Descriptions').val(),
+                    CityId:$('#CityId').val(),
+                    CountryId:$('#CountryId').val(),
+                    OrgName:$('#OrgNames').val(),
+                    OrgDetails:$('#OrgDetail').val(),
+                    Seats:$('#Seat').val(),
+                    mType:$('#MType').val(),
+                    sDate:$('#SDate').val(),
+                    eDate:$('#EDate').val(),
+                },
+                success: function(){
+                    location.reload();
+                }
+            });
+        } 
+
+         //city and country 
+        getCountry();
+		$('#City').attr('disabled', true);
+		$('#Country').change(function () {
+			$('#City').empty();
+			$('#City').append('<option>Select City</option>')
+			$('#City').attr('disabled', false);
+			var countryId = $('#Country	').val();
+			$.ajax({
+				url: '/User/getCityList',
+				data: {
+					id: countryId,
+				},
+				type: "POST",
+				success: function (result) {
+					$.each(result, function (i, data) {
+						$('#City').append('<option value=' + data.cityId + '>' + data.name + '</option>')
+					})
+
+				}
+			})
+		})
+
+		function getCountry() {
+			$.ajax({
+				url: '/User/getCountryList',
+				type: 'POST',
+				success: function (result) {
+					$.each(result, function (i, data) {
+						$('#Country').append('<option value=' + data.countryId + '>' + data.name + '</option>');
+					})
+				},
+			})
+		}
+
+        //select Theme
+        function selectTheme() {
+			$.ajax({
+				url: '/Admin/getThemeList',
+				type: 'POST',
+				success: function (result) {
+					$.each(result, function (i, data) {
+						$('#Themes').append('<option value=' + data.themeId + '>' + data.title + '</option>');
+					})
+				},
+			})
+		}
+</script>

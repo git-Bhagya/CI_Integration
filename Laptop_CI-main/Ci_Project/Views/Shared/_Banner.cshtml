@@ -1,0 +1,259 @@
+﻿@model AdminViewModel
+
+@using System.Security.Claims;
+@{
+    var identity = User.Identity as ClaimsIdentity;
+    var email = identity?.FindFirst(ClaimTypes.Email)?.Value;
+}
+<script src="https://code.jquery.com/jquery-3.6.4.js" integrity="sha256-a9jBBRygX1Bh5lt8GZjXDzyOB+bWve9EiO7tROUtj/E=" crossorigin="anonymous"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4/dt-1.10.24/datatables.min.css"/>
+<script type="text/javascript" src="https://cdn.datatables.net/v/bs4/dt-1.10.24/datatables.min.js"></script>
+
+
+<div class="row">
+    <div class="col-lg-12">
+        @* <div class="row" id="loadSideBar">
+            @await Html.PartialAsync("~/Views/Shared/_User.cshtml")
+            </div>*@
+        <h3 class="mt-5">Banner</h3><hr />
+        <div class="d-flex justify-content-between mt-4">
+            <div class="ps-2 pt-2">
+                                    <input type="text" id="myInput" placeholder="Search...">
+
+            </div>
+            <form method="post" asp-controller="Admin" asp-action="GetBannerAdd">
+                <div>
+                    <a class="btn btn-login buttonColor mt-2" data-bs-toggle="modal" data-bs-target="#exampleModalGoal" style="border:2px solid #F88634;color: #F88634;border-radius:20px">+ Add</a>
+                    <!-- Button trigger modal -->
+                    @*<button type="button" class="btn btn-outline-warning" data-bs-toggle="modal" data-bs-target="#exampleModalGoal" style="border-radius: 50px;">
+                        + Add
+                        </button>*@
+                    <div class="modal fade" id="exampleModalGoal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLabel">Add Admin</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="mb-3">
+                                        <label for="exampleFormControlInput1" class="form-label">Banner Images</label>
+                                        <input type="file" class="form-control" asp-for="BImages">
+                                        <span asp-validation-for="BImages" class="text-danger"></span>
+
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="exampleFormControlInput1" class="form-label">Text</label>
+                                        <input type="text" class="form-control" asp-for="BText">
+                                        <span asp-validation-for="BText" class="text-danger"></span>
+
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="exampleFormControlInput1" class="form-label">Sort Order</label>
+                                        <input type="text" class="form-control" asp-for="SortOrder">
+                                        <span asp-validation-for="SortOrder" class="text-danger"></span>
+                                    </div>
+
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-outline-dark" style="border-radius:50px" data-bs-dismiss="modal">Cancel</button>
+                                    <button type="submit" class="btn buttonColor" style="border:2px solid #F88634;color: #F88634;border-radius:20px">Save</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="table mt-4" style="overflow-x:auto;">
+            <table class="table border" id="myTable">
+                <thead>
+                    <tr>
+                        <th scope="col">Banner Id</th>
+                        <th scope="col">Image</th>
+                        <th scope="col">Text</th>
+                        <th scope="col">Sort Order</th>
+                        <th scope="col">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.BannerList)
+                    {
+                        <tr>
+                            <td>@item.BannerId</td>
+                            <td>@item.Image</td>
+                            <td>@item.Text</td>
+                            <td>@item.SortOrder</td>
+                            @*edit and delete*@
+                            <td class="p-0 pt-2 px-1">
+                                <button type="button" data-bs-toggle="modal" data-bs-target="#editBanner" class="border-0 bg-transparent" onclick="editBannerData(@item.BannerId)">
+                                    <i class="bi bi-pencil-square" style="color:#f88634"></i>
+                                </button>
+                                <div class="modal fade" id="editBanner" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="exampleModalLabel">Edit Admin Data </h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="mb-3">
+                                                    <label for="exampleFormControlInput1" class="form-label">Images</label>
+                                                    <input type="text" class="form-control" id="BImage">
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="exampleFormControlInput1" class="form-label">Banner Text</label>
+                                                    <input type="text" class="form-control" id="Btexts">
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="exampleFormControlInput1" class="form-label">Sort Order</label>
+                                                    <input type="text" class="form-control" id="SOrders">
+                                                </div>
+                                               
+                                            </div>
+
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-outline-dark" style="border-radius:50px" data-bs-dismiss="modal">Cancel</button>
+                                                <button type="submit" class="btn buttonColor" style="border-radius:50px;color:#f88634;border:2px solid #f88634" onclick="saveChanges()">Save</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <a class="btn" data-bs-toggle="modal" data-bs-target="#DeleteData" onclick="getId(@item.BannerId)"><i class="bi bi-trash3 text-dark"></i></a>
+                                @*<a class="btn btn-login buttonColor mt-2" data-bs-toggle="modal" data-bs-target="#DeleteData" style="border:2px solid #F88634;color: #F88634;border-radius:20px">+ Add</a>*@
+                                <!-- Button trigger modal -->
+                                @*<button type="button" class="btn btn-outline-warning" data-bs-toggle="modal" data-bs-target="#exampleModalGoal" style="border-radius: 50px;">
+                                    + Add
+                                    </button>*@
+                                <div class="modal fade" id="DeleteData" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="exampleModalLabel">Are you sure to delete this data?</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-outline-dark" style="border-radius:50px" data-bs-dismiss="modal">Cancel</button>
+                                                <button type="submit" class="btn buttonColor" style="border:2px solid #F88634;color: #F88634;border-radius:20px" onclick="DeleteData()">Confirm Delete</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                            </td>
+
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+    <script>
+         //edit data
+            var bannerId = 0;
+            function editBannerData(Id){
+
+            $.ajax({
+                url:"/Admin/GetEditBanner",
+                method:"post",
+                data: {
+                    id:Id,
+                },
+                success : function(result){
+                    console.log(result);
+                    bannerId = result.bannerId;
+                    //$('#UserId').val(result.userid)
+                    $('#BImage').val(result.image);
+                    $('#Btexts').val(result.text);
+                    $('#SOrders').val(result.sortOrder);
+                    
+                }
+
+            })
+
+        }
+
+         //edit and update for both
+            function saveChanges(){
+            $.ajax({
+                url : "/Admin/EditDataBanner",
+                method : "POST",
+                data:{
+                    id:bannerId,
+                    bImage:$('#BImage').val(),
+                    bText:$('#Btexts').val(),
+                    SOrd:$('#SOrders').val(),
+                   
+                },
+                success: function(){
+                    location.reload();
+                },
+            });
+        }
+
+         var uid = 0;
+            function getId(userid){
+            uid = userid;
+            }
+
+        //delete Data
+        function DeleteData(){
+            $.ajax({
+                url:"/Admin/DeleteData",
+                method:"post",
+                data:{
+                    id:uid,
+                    email:"@email",
+
+                },
+                success: function(){
+                    location.reload();
+                }
+            })
+            
+        }
+
+        // Get the input field
+        var input = document.getElementById("myInput");
+
+        // Get the table and rows
+        var table = document.getElementById("myTable");
+        var rows = table.getElementsByTagName("tr");
+
+        // Add event listener to the input field
+        input.addEventListener("keyup", function() {
+            var filter = input.value.toLowerCase();
+            for (var i = 1; i < rows.length; i++) {
+                var row = rows[i];
+                var cells = row.getElementsByTagName("td");
+                var found = false;
+                for (var j = 0; j < cells.length; j++) {
+                    var cell = cells[j];
+                    if (cell.innerHTML.toLowerCase().indexOf(filter) > -1) {
+                        found = true;
+                        break;
+                    }
+                }
+                if (found) {
+                    row.style.display = "";
+                } else {
+                    row.style.display = "none";
+                }
+            }
+        });
+    </script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+        var dataTable = $('#app-table').DataTable({
+        "pageLength": 4,
+        });
+        $('#search-bar').keyup(function () {
+        dataTable.search(this.value).draw();
+        });
+        });
+    </script>
