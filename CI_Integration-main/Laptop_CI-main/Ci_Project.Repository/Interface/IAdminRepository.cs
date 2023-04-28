@@ -30,7 +30,8 @@ namespace Ci_Project.Repository.Interface
         //Mission
         public List<Mission> getMissionList();
         public bool MissionAdd(AdminViewModel avm, int? uid, int[] listofSkills);
-        public Mission getEditMission(int id);
+        public AdminViewModel getEditMission(int id);
+
         public string getEditMissionData(int id, string mTitle, string Sdes, string des, int Cityid, int countryId, string OrgName, string OrdDetails, DateTime sDate, DateTime eDate, string mType, string seats, string mImages, string mVideo, string mDoc);
         public bool getDeleteMission(int id);
         public List<MissionMedium> MissionImages(int id);
@@ -70,8 +71,8 @@ namespace Ci_Project.Repository.Interface
         //cms page
         public List<CmsPage> getCMSDataList();
         public bool AddCMSPage(AdminViewModel avm);
-        public CmsPage GetEditCMS(int id);
-        //public AdminViewModel GetEditCMS(int id);
+        //public CmsPage GetEditCMS(int id);
+        public AdminViewModel GetEditCMS(int id);
 
         public bool EditCMSPage(int cmsId , AdminViewModel advm);
         public bool getDeleteCMS(int id);

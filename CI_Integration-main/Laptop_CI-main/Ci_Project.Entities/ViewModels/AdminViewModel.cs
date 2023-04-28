@@ -36,8 +36,8 @@ namespace Ci_Project.Entities.ViewModels
         public string Avatar { get; set; }
         public int EmployeeId { get; set; }
         public string Department { get; set; }
-        public int city { get; set; }
-        public int country { get; set; }
+        public long city { get; set; }
+        public long country { get; set; }
         public string ProfileText { get; set; }
         public string status { get; set; }
         public string Pass { get; set; }
@@ -55,9 +55,9 @@ namespace Ci_Project.Entities.ViewModels
         public string OrgDetails { get; set; }
         public string Seats { get; set; }
         public DateTime Deadline { get; set; }
-        public int Theme { get; set; }
+        public long Theme { get; set; }
         public string Skills { get; set; }
-        public List<IFormFile> Mimages { get; set; }
+        public string Mimages { get; set; }
         public string MultipleSkill { get; set; }
         public string Document { get; set; }
         public string Availability { get; set; }

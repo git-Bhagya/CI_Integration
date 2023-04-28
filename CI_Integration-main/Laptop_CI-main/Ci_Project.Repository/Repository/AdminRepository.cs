@@ -3,6 +3,7 @@ using Ci_Project.Entities.Models;
 using Ci_Project.Entities.ViewModels;
 using Ci_Project.Repository.Interface;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -168,27 +169,28 @@ namespace Ci_Project.Repository.Repository
 
             foreach (var img in avm.Mimages)
             {
-                var fileName = img.FileName;
-                var fileType = img.ContentType;
+                //var fileName = img.FileName;
+                //var fileType = img.ContentType;
 
-                using (var fileStream = img.OpenReadStream())
-                {
-                    var filePath = Path.Combine("/UploadImage/", fileName);
-                    using (var fStream = new FileStream(Path.Combine("wwwroot", "UploadImage", fileName), FileMode.Create))
-                    {
+                //using (var fileStream = img.OpenReadStream())
+                //{
+                //    var filePath = Path.Combine("/UploadImage/", fileName);
+                //    using (var fStream = new FileStream(Path.Combine("wwwroot", "UploadImage", fileName), FileMode.Create))
+                //    {
 
                         MissionMedium model1 = new MissionMedium()
                         {
                             MediaType = "image",
-                            MediaPath = "/Assets/" + avm.Mimages,
+                            MediaPath = "/Assets/" + img,
+                            //MediaPath = filePath,
                             MissionId = model.MissionId,
                             MediaName = model.Title
                         };
                         _db.MissionMedia.Add(model1);
                         _db.SaveChanges();
-                    }
+                //    }
 
-                }
+                //}
             }
 
             MissionMedium model2 = new MissionMedium()
@@ -221,7 +223,8 @@ namespace Ci_Project.Repository.Repository
             {
                 MissionDocument doc = new MissionDocument()
                 {
-                    DocumentName = avm.Document,
+                    //DocumentName = docs.FileName,
+                    //DocumentName = doc.DocumentPath,
                     MissionId = model.MissionId,
                 };
                 _db.MissionDocuments.Add(doc);
@@ -231,11 +234,37 @@ namespace Ci_Project.Repository.Repository
             return true;
         }
         //MISSION get edit data
-        public Mission getEditMission(int id)
+        //public Mission getEditMission(int id)
+        //{
+        //    var data = _db.Missions.Where(x => x.MissionId == id).FirstOrDefault();
+        //    return data;
+        //}
+        
+        public AdminViewModel getEditMission(int id)
         {
-            var data = _db.Missions.Where(x => x.MissionId == id).FirstOrDefault();
-            return data;
-        }       
+            var missionData = _db.Missions.FirstOrDefault(mission => mission.MissionId == id);
+            var images = _db.MissionMedia.FirstOrDefault(image => image.MissionId == id);
+            var docs = _db.MissionDocuments.FirstOrDefault(doc => doc.MissionId == id);
+            AdminViewModel avm = new AdminViewModel()
+            {
+                MissionTitle = missionData.Title,
+                Description = missionData.Description,
+                SDescription= missionData.ShortDescription,
+                OrgName = missionData.OrganizationName,
+                OrgDetails = missionData.OrganizationDetail,
+                StartDate = missionData.StartDate,
+                EndDate = missionData.EndDate,
+                MissionType = missionData.MissionType,
+                Seats = missionData.Availability,
+                city = missionData.CityId,
+                country = missionData.CountryId,
+                Theme = missionData.ThemeId,
+                Mimages = images.MediaPath,
+                Document = docs.DocumentPath
+
+            };
+            return avm;
+        }
         //MISSION edit data
         public string getEditMissionData(int id, string mTitle, string Sdes, string des, int Cityid, int countryId, string OrgName, string OrdDetails, DateTime sDate, DateTime eDate, string mType, string seats, string mImages, string mVideo, string mDoc)
         {
@@ -587,22 +616,17 @@ namespace Ci_Project.Repository.Repository
 
         }
         //GET Edit Cms
-        public CmsPage GetEditCMS(int id)
+        public AdminViewModel GetEditCMS(int id)
         {
-            var data = _db.CmsPages.Where(x => x.CmsPageId == id).FirstOrDefault();
-            return data;
+            var CMS = _db.CmsPages.Where(x => x.CmsPageId == id).FirstOrDefault();
+            AdminViewModel avm = new AdminViewModel()
+            {
+                CMStitle = CMS.Title,
+                CMSdescription = CMS.Description,
+                CMSslug = CMS.Slug,
+            };
+            return avm;
         }
-        //public AdminViewModel GetEditCMS(int id)
-        //{
-        //    var CMS = _db.CmsPages.Where(x => x.CmsPageId == id).FirstOrDefault();
-        //    AdminViewModel avm = new AdminViewModel()
-        //    {
-        //        CMStitle = CMS.Title,
-        //        CMSdescription = CMS.Description,
-        //        CMSslug = CMS.Slug,
-        //    };
-        //    return avm;
-        //}
         //edit data Cms
         public bool EditCMSPage(int cmsId, AdminViewModel advm)
         {

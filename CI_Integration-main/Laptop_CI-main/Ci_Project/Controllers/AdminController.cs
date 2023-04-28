@@ -133,10 +133,15 @@ namespace Ci_Project.Controllers
             };
             return PartialView("_MissionEdit", admin);
         }
-        public JsonResult EditMission(int id)
+        //public JsonResult EditMission(int id)
+        //{
+        //    var data1 = _adminRepository.getEditMission(id);  
+        //    return new JsonResult(data1);
+        //}
+        public IActionResult EditMission(int id)
         {
-            var data1 = _adminRepository.getEditMission(id);  
-            return new JsonResult(data1);
+            var data = _adminRepository.getEditMission(id);
+            return PartialView("_MissionEdit", data);
         }
         //get images and videos
         public JsonResult MissionImages(int id)
@@ -223,16 +228,13 @@ namespace Ci_Project.Controllers
             return PartialView("_EditCMS", admin);
         }
         //get edit data
-        public JsonResult GetEditCMS(int id)
+        
+        public IActionResult GetEditCMS(int id)
         {
             var data1 = _adminRepository.GetEditCMS(id);
-            return new JsonResult(data1);
+            
+            return PartialView("_EditCMS", data1);
         }
-        //public IActionResult GetEditCMS(int id)
-        //{
-        //    var data1 = _adminRepository.GetEditCMS(id);
-        //    return View();
-        //}
         //edit and update data in cms
         public IActionResult EditCMSPage(int cmsPageId, AdminViewModel advm)
         {
